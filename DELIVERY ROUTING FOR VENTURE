@@ -1,3 +1,15 @@
+"""
+A delivery person is given a list of dropoff locations for his daily route. 
+note that"i am not biased its just the problem statement that said _"his"_ :) "
+Our goal then is to reach all of our target destinations in as short of a distance as possible. 
+Alternatively, we could also consider other objectives to optimize for, either separately or at the same time:
+shortest time
+number of left turns
+avoiding highways
+eco-friendly routes
+avoid residential areas
+"""
+
 import pandas as pd
 import math
 import numpy as np
@@ -17,7 +29,23 @@ for _ in df.itertuples():
     POIS.append(poi(_.Address,"canada",_.Latitude, _.Longitude))
 POIS
 
+drawPOIS(POIS, zoom=10)
+G = nx.DiGraph()
+G.add_nodes_from(POIS)
 
+durations = []
+pbar = tqdm(total=len(G.nodes())**2)
+for source in G.nodes():
+    duration = []
+    for destination in G.nodes():
+        pbar.update()
+        if source == destination: 
+            duration.append(0)
+            continue
+        G.add_edge(source, destination, route = source.route_to(destination))
+        route = source.route_to(destination)
+        duration.append(route['duration'])
+    durations.append(duration)
 
 
 
