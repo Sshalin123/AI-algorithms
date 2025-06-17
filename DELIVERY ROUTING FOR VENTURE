@@ -155,3 +155,13 @@ for generation in tqdm(range(num_of_generation), total=num_of_generation):
     running_time[generation] = time.time() - start_time
 
 
+fitness = cal_pop_objective_1(trip, new_population)
+best_index = np.where(fitness == np.min(fitness))
+running_time = running_time.cumsum()
+convergence_index = np.where(best_outputs == np.min(best_outputs))
+convergence_time = running_time[convergence_index]
+
+print("Best solution:", new_population[best_index, :][0][0])
+print("Best fitness:", fitness[best_index][0])
+print("The algorithm converges in", np.min(convergence_index), "iterations.")
+print("The algorithm converges in", np.min(convergence_time), "seconds.")
