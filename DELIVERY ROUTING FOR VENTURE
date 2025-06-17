@@ -110,3 +110,48 @@ def mutation(offspring_crossover):
         offspring_crossover[i, a] = mut_2
         offspring_crossover[i, b] = mut_1
     return offspring_crossover
+
+
+
+sol_per_pop = 8
+num_parents_mating = 4
+num_offsprings = 4
+pop_size = (sol_per_pop, trip.shape[1])
+offspring_size = (num_offsprings, trip.shape[1])
+new_population = np.zeros(pop_size)
+for i in range(8):
+    new_population[i] = np.arange(1, numberOfStops + 1)
+    random.shuffle(new_population[i])
+new_population = new_population.astype(int)
+
+best_outputs = []
+num_of_generation = 30000
+running_time = np.zeros(num_of_generation)
+
+for generation in tqdm(range(num_of_generation), total=num_of_generation):
+    start_time = time.time()
+    fitness = cal_pop_objective_1(trip, new_population)
+    best_outputs.append(np.min(fitness))
+    parents = select_mating(new_population, fitness, num_parents_mating)
+    offspring_crossover = np.zeros(offspring_size)
+    r_1 = np.random.random()
+    if r_1 < 0.7:
+        offspring_crossover[0] = crossover(parents[0], parents[1])
+        offspring_crossover[1] = crossover(parents[1], parents[0])
+        offspring_crossover[2] = crossover(parents[2], parents[3])
+        offspring_crossover[3] = crossover(parents[3], parents[2])
+    else:
+        offspring_crossover[0] = parents[0]
+        offspring_crossover[1] = parents[1]
+        offspring_crossover[2] = parents[2]
+        offspring_crossover[3] = parents[3]
+    r_2 = np.random.random()
+    if r_2 < 0.05:
+        offspring_mutation = mutation(offspring_crossover)
+    else:
+        offspring_mutation = offspring_crossover
+    new_population[0:parents.shape[0], :] = parents
+    new_population[parents.shape[0]:, :] = offspring_mutation
+    running_time[generation] = time.time() - start_time
+
+
