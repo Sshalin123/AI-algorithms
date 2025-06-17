@@ -47,10 +47,66 @@ for source in G.nodes():
         duration.append(route['duration'])
     durations.append(duration)
 
+trip = np.array(durations)
+trip
+
+# define a function that can compute the fitness value of each solution in the population
+def cal_pop_objective_1(m, pop):
+    M = np.zeros([8,numberOfStops-1])
+    fitness = np.zeros(8)
+    for i in range(8):
+        for j in range(numberOfStops-1):
+            M[i,j] = m[pop[i,j]-1,pop[i,j+1]-1]
+    for k in range(8):
+        fitness[k] = np.sum(M[k])
+    return fitness
+
+# define a function that can select the best individuals in the current generation as the parents to produce the offsprings
+def select_mating(pop, fitness, num_parents):
+    parents = np.zeros([num_parents, pop.shape[1]])
+    for parent_num in range(num_parents):
+        min_fitness_index = np.where(fitness == np.min(fitness))
+        min_fitness_index = min_fitness_index[0][0]
+        parents[parent_num, :] = pop[min_fitness_index, :]
+        fitness[min_fitness_index] = 999999999
+    return parents
 
 
+# you would notice its similar to genetic wherein we used to perform mutation springover and related crossover things 
+# lmk via an email to upload a specified questions and its answer in a numerical format as i use to perform many question numericall on paper and then i use to writ them its a perfect habit in any case 
 
+def crossover(mum, dad):
+    size = len(mum)
+    shalin, mahir = [-1] * size, [-1] * size
+    start, end = sorted([random.randrange(size) for _ in range(2)])
+    shalin_inherited = []
+    for i in range(start, end + 1):
+        shalin[i] = mum[i]
+        shalin_inherited.append(mum[i])
+    current_dad_position, current_mum_position = 0, 0
+    fixed_pos = list(range(start, end + 1))
+    i = 0
+    while i < size:
+        if i in fixed_pos:
+            i += 1
+            continue
+        test_shalin = shalin[i]
+        if test_shalin == -1:
+            dad_trait = dad[current_dad_position]
+            while dad_trait in shalin_inherited:
+                dad_trait = dad[current_dad_position]
+                current_dad_position += 1
+            shalin[i] = dad_trait
+            shalin_inherited.append(dad_trait)
+        i += 1
+    return shalin
 
-
-
-
+def mutation(offspring_crossover):
+    a = random.randint(0, numberOfStops - 1)
+    b = random.randint(0, numberOfStops - 1)
+    for i in range(offspring_crossover.shape[0]):
+        mut_1 = offspring_crossover[i, a]
+        mut_2 = offspring_crossover[i, b]
+        offspring_crossover[i, a] = mut_2
+        offspring_crossover[i, b] = mut_1
+    return offspring_crossover
