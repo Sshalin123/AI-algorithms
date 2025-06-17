@@ -165,3 +165,17 @@ print("Best solution:", new_population[best_index, :][0][0])
 print("Best fitness:", fitness[best_index][0])
 print("The algorithm converges in", np.min(convergence_index), "iterations.")
 print("The algorithm converges in", np.min(convergence_time), "seconds.")
+
+#plotting stuf
+fig, ax = plt.subplots(2, figsize=(8, numberOfStops - 2))
+ax[0].plot(best_outputs, 'green')
+ax[0].set_xlabel("Iteration", fontsize=10)
+ax[0].set_ylabel("Fitness", fontsize=10)
+ax[0].set_title("GA (Fitness vs # of iterations)   1 station", fontsize=12)
+ax[1].plot(running_time, best_outputs, 'red')
+ax[1].set_xlabel("Running time/s", fontsize=10)
+ax[1].set_ylabel("Fitness", fontsize=10)
+ax[1].set_title("GA (Fitness vs Running time)   1 station", fontsize=12)
+plt.show()
+
+
